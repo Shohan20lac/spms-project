@@ -11,7 +11,6 @@ router.get('/testapi', (req, res) => {
 router.get('/api/get/account-types', (req, res) => {
     pool.getConnection((err, connection) => {
     if (err) {
-      // not connected!
       console.log('API couldn\'t connect to Database: ' + err);
       return;
     }
@@ -22,10 +21,7 @@ router.get('/api/get/account-types', (req, res) => {
     connection.query(sql, (error, data) => {
   	  	if(error){
   	  		res.json({"status": 500, "error": error, "response": data});
-  	  		//If there is error, we send the error in the error section with 500 status
   	  	} else {
-    			//res.json({"status": 200, "error": 'No Error', "response": results});
-    			//If there is no error, all is good and response is 200OK.
           res.json({"status": 200, "message": 'success', "response": data});
   	  	}
     });
@@ -47,7 +43,6 @@ router.get('/api/get/account-types', (req, res) => {
 router.get('/api/get/account', (req, res) => {
     pool.getConnection((err, connection) => {
     if (err) {
-      // not connected!
       console.log('API couldn\'t connect to Database: ' + err);
       return;
     }
@@ -58,82 +53,7 @@ router.get('/api/get/account', (req, res) => {
     connection.query(sql, (error, data) => {
   	  	if(error){
   	  		res.json({"status": 500, "error": error, "response": data});
-  	  		//If there is error, we send the error in the error section with 500 status
   	  	} else {
-    			//res.json({"status": 200, "error": 'No Error', "response": results});
-    			//If there is no error, all is good and response is 200OK.
-          res.json({"status": 200, "message": 'success', "response": data});
-  	  	}
-    });
-
-
-    // When done with the connection, release it.
-    connection.release();
-
-    // Handle error after the release.
-    if (err) {
-      console.log('Error in release MySQL database connection. Error: ' + err);
-      return;
-    }
-
-  });
-});
-
-/* Gets admin details from ADMIN */
-router.get('/api/get/admin-details', (req, res) => {
-    pool.getConnection((err, connection) => {
-    if (err) {
-      // not connected!
-      console.log('API couldn\'t connect to Database: ' + err);
-      return;
-    }
-
-    let sql = 'SELECT * FROM ADMIN';
-
-    // Use the connection
-    connection.query(sql, (error, data) => {
-  	  	if(error){
-  	  		res.json({"status": 500, "error": error, "response": data});
-  	  		//If there is error, we send the error in the error section with 500 status
-  	  	} else {
-    			//res.json({"status": 200, "error": 'No Error', "response": results});
-    			//If there is no error, all is good and response is 200OK.
-          res.json({"status": 200, "message": 'success', "response": data});
-  	  	}
-    });
-
-
-    // When done with the connection, release it.
-    connection.release();
-
-    // Handle error after the release.
-    if (err) {
-      console.log('Error in release MySQL database connection. Error: ' + err);
-      return;
-    }
-
-  });
-});
-
-/* Gets admin tasks from ADMIN_TASKS*/
-router.get('/api/get/admin-tasks', (req, res) => {
-    pool.getConnection((err, connection) => {
-    if (err) {
-      // not connected!
-      console.log('API couldn\'t connect to Database: ' + err);
-      return;
-    }
-
-    let sql = 'SELECT * FROM ADMIN_TASKS';
-
-    // Use the connection
-    connection.query(sql, (error, data) => {
-  	  	if(error){
-  	  		res.json({"status": 500, "error": error, "response": data});
-  	  		//If there is error, we send the error in the error section with 500 status
-  	  	} else {
-    			//res.json({"status": 200, "error": 'No Error', "response": results});
-    			//If there is no error, all is good and response is 200OK.
           res.json({"status": 200, "message": 'success', "response": data});
   	  	}
     });
@@ -160,7 +80,6 @@ router.post('/login', (req, res) => {
   
   pool.getConnection((err, connection) => {
     if (err) {
-      // not connected!
       console.log('API couldn\'t connect to Database: ' + err);
       return;
     }
@@ -179,7 +98,6 @@ router.post('/login', (req, res) => {
       else {
         console.log('The solution is: ', results);
         if (results.length >0){
-          //console.log('password(AFTER AUTH):', sha1(results[0].salt + sha1(results[0].salt + sha1(password))));
           console.log(results[0].password);
           if (results[0].password == password && results[0].accountType == accountType){
             

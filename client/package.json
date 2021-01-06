@@ -48,5 +48,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://warm-escarpment-95577.herokuapp.com:5000"
+  "proxy": "http://localhost:5000"
 }
