@@ -20,9 +20,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 /* for development */
-app.use(express.static(path.join(__dirname, 'client/public')));
+//app.use(express.static(path.join(__dirname, 'client/public')));
 /* for production */
-//app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.use('/', indexRouter);
 
@@ -30,9 +30,9 @@ app.use('/', indexRouter);
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
   /* for development */
-  res.sendFile(path.join(__dirname+'/client/public/index.html'));
+  //res.sendFile(path.join(__dirname+'/client/public/index.html'));
   /* for production */
-  //res.sendFile(path.join(__dirname+'/client/build/index.html'));
+  res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
 
 module.exports = app;
