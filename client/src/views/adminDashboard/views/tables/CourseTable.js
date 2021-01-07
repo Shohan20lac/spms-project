@@ -24,21 +24,21 @@ table: {
 
 let rows = [];
 
-class DepartmentTable extends React.Component {
+class CourseTable extends React.Component {
     signal = axios.CancelToken.source();
 
     constructor (props) {
         super (props);
         this.state = {
-            departmentList: []
+            coursesList: []
         };
     }
 
     async componentDidMount () {
-        const { data } = await axios.get('/api/get/department');
+        const { data } = await axios.get('');
         console.dir(data);
-        this.setState ({ departmentList: data.response });
-        rows = this.state.departmentList;
+        this.setState ({ coursesList: data.response });
+        rows = this.state.coursesList;
         console.log(rows);
         
         this.forceUpdate();
@@ -52,25 +52,25 @@ class DepartmentTable extends React.Component {
                 <Table className={classes.table} size="small" aria-label="a dense table">
                 <TableHead>
                     <TableRow>
-                        <TableCell>Department Name</TableCell>
-                        <TableCell align="right">Dept ID</TableCell>
-                        <TableCell align="right">Dept Location</TableCell>
-                        <TableCell align="right">Under the School of</TableCell>
-                        <TableCell align="right">Dept Head ID</TableCell>
+                        <TableCell>Course ID</TableCell>
+                        <TableCell align="right">Course Title</TableCell>
+                        <TableCell align="right">Course Description</TableCell>
+                        <TableCell align="right">Credit Hour</TableCell>
+                        <TableCell align="right">Department</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map(row => (
+                    {/*rows.map(row => (
                     <TableRow key={uuidv4()}>
                         <TableCell component="th" scope="row">
-                        {row.deptName}
+                        {}
                         </TableCell>
-                        <TableCell align="right">{row.deptID}</TableCell>
-                        <TableCell align="right">{row.location}</TableCell>
-                        <TableCell align="right">{row.schoolName}</TableCell>
-                        <TableCell align="right">{row.deptHeadID}</TableCell>
+                        <TableCell align="right">{}</TableCell>
+                        <TableCell align="right">{}</TableCell>
+                        <TableCell align="right">{}</TableCell>
+                        <TableCell align="right">{}</TableCell>
                     </TableRow>
-                    ))}
+                    ))*/}
                 </TableBody>
                 </Table>
             </Paper>
@@ -79,4 +79,4 @@ class DepartmentTable extends React.Component {
     }
  }
 
- export default DepartmentTable;
+ export default CourseTable;

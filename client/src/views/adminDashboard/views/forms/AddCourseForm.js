@@ -8,9 +8,12 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import DateFnsUtils from '@date-io/date-fns';
+import MenuItem from '@material-ui/core/MenuItem';
+import axios from 'axios';
 import {
   MuiPickersUtilsProvider
 } from '@material-ui/pickers';
+import { v4 as uuidv4 } from 'uuid';
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -28,6 +31,8 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
+let deptList = [];
+
 class AddCourseForm extends React.Component {
     constructor (props) {
         super (props);
@@ -37,7 +42,8 @@ class AddCourseForm extends React.Component {
             courseDescription: '',
             creditHour: 0.0,
             deptID: '',
-            degreeID: ''
+            degreeID: '',
+            deptList: []
         };
         
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -46,31 +52,40 @@ class AddCourseForm extends React.Component {
         this.handleDegreeIDSelectChange = this.handleDegreeIDSelectChange.bind(this);
     }
 
-    handleChange (name, event) {
+    async componentDidMount () {
+        const { data } = await axios.get('/api/get/department');
+        console.dir(data);
+        this.setState ({ deptList: data.response });
+        deptList = this.state.deptList;
+        console.log(deptList);
+        this.forceUpdate();
+    }
+
+    handleChange (event) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        
         this.setState({
-            [name]: event.target.value
+            [name]: value
         });
     }
 
-    handleSubmit (name, event) {
-        this.setState({
-            [name]: event.target.value
-        });
+    handleSubmit (event) {
+        event.preventDefault();
+        console.dir(this.state);
     }  
-
     
     handleDeptIDSelectChange (event) {
         this.setState({
             deptID: event.target.value
         });
-        this.props.onHandleChange(event);
     }
 
     handleDegreeIDSelectChange (event) {
         this.setState({
             degreeID: event.target.value
         });
-        this.props.onHandleChange(event);
     }
 
     render () {
@@ -135,13 +150,17 @@ class AddCourseForm extends React.Component {
                                 id="deptID"
                                 name="deptID"
                                 select
-                                label="Department ID"
+                                label="Department Name"
                                 value={this.state.deptID}
                                 onChange={this.handleDeptIDSelectChange}
                                 variant="filled"
                                 margin="normal"
                                 >
-                                    { /* load departments from database tab */ }
+                                {deptList.map((option) => (
+                                    <MenuItem key={uuidv4()} value={option.deptID}>
+                                        {option.deptName}
+                                    </MenuItem>
+                                ))}
                             </TextField>
                             <TextField
                                 fullWidth

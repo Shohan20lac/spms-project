@@ -219,6 +219,7 @@ router.get('/api/get/department', (req, res) => {
   });
 });
 
+// Insert Department data into Department table
 router.post('/api/put/departmentdata', (req, res) => {
   console.log('deptID: ' + req.body.deptID);
   console.log('schoolName: ' + req.body.schoolName);
@@ -240,7 +241,7 @@ router.post('/api/put/departmentdata', (req, res) => {
     let sql = 'INSERT INTO DEPARTMENT (deptID, schoolName, deptName, location, deptHeadID) VALUES (?, ?, ?, ?, ?);';
 
     // Use the connection
-    connection.query(sql, [deptID, schoolName, location, deptName, deptHeadID], (error, results, fields) => {
+    connection.query(sql, [deptID, schoolName, deptName, location, deptHeadID], (error, results, fields) => {
       console.dir(fields);
       if (error) {
         console.log("error ocurred",error);
@@ -261,6 +262,94 @@ router.post('/api/put/departmentdata', (req, res) => {
           res.send({
             "code":204,
             "success":"Department Data Not Entered."
+          });
+        }
+      }
+    });
+
+    // When done with the connection, release it.
+    connection.release();
+
+    // Handle error after the release.
+    if (err) {
+      console.log('Error in release MySQL database connection. Error: ' + err);
+      return;
+    }
+
+  });
+});
+
+// Get Degree Program table values
+router.get('/api/get/degreeprogram', (req, res) => {
+    pool.getConnection((err, connection) => {
+    if (err) {
+      console.log('API couldn\'t connect to Database: ' + err);
+      return;
+    }
+
+    let sql = 'SELECT * FROM DEGREE_PROGRAM';
+
+    // Use the connection
+    connection.query(sql, (error, data) => {
+  	  	if(error){
+  	  		res.json({"status": 500, "error": error, "response": data});
+  	  	} else {
+          res.json({"status": 200, "message": 'success', "response": data});
+  	  	}
+    });
+
+
+    // When done with the connection, release it.
+    connection.release();
+
+    // Handle error after the release.
+    if (err) {
+      console.log('Error in release MySQL database connection. Error: ' + err);
+      return;
+    }
+
+  });
+});
+
+// insert degree program data into DEGREE_PROGRAM table
+router.post('/api/put/degreeprogramdata', (req, res) => {
+  console.log('degreeID: ' + req.body.degreeID);
+  console.log('degreeTitle: ' + req.body.degreeTitle);
+  console.log('deptID: ' + req.body.deptID);
+  const degreeID = req.body.degreeID;
+  const degreeTitle = req.body.degreeTitle;
+  const deptID = req.body.deptID;
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.log('API couldn\'t connect to Database: ' + err);
+      return;
+    }
+
+    let sql = 'INSERT INTO DEGREE_PROGRAM (degreeID, degreeTitle, deptID) VALUES (?, ?, ?);';
+
+    // Use the connection
+    connection.query(sql, [degreeID, degreeTitle, deptID], (error, results, fields) => {
+      console.dir(fields);
+      if (error) {
+        console.log("error ocurred",error);
+        res.send({
+          "code":400,
+          "success":"Error Ocurred."
+        })
+      }
+      else {
+        console.log('The solution is: ', results);
+        if (results.length >0){
+            res.send({
+              "code":200,
+              "success":"Degree Program Data Entered."
+            });
+        }
+        else {
+          res.send({
+            "code":204,
+            "success":"Degree Program Data Not Entered."
           });
         }
       }

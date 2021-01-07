@@ -11,6 +11,9 @@ import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider
 } from '@material-ui/pickers';
+import axios from 'axios';
+import MenuItem from '@material-ui/core/MenuItem';
+import { v4 as uuidv4 } from 'uuid';
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -28,13 +31,16 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
+let deptList = [];
+
 class AddDegreeProgramForm extends React.Component {
     constructor (props) {
         super (props);
         this.state = {
             degreeID: '',
             degreeTitle: '',
-            deptID: []
+            deptID: [],
+            deptList: []
         };
         
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -42,13 +48,36 @@ class AddDegreeProgramForm extends React.Component {
         this.handleSelectChange = this.handleSelectChange.bind(this);
     }
 
+    async componentDidMount () {
+        const { data } = await axios.get('/api/get/department');
+        console.dir(data);
+        this.setState ({ deptList: data.response });
+        deptList = this.state.deptList;
+        console.log(deptList);
+        this.forceUpdate();
+    }
+
     handleChange (event) {
-        this.props.onHandleChange(event);
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        
+        this.setState({
+            [name]: value
+        });
     }
 
     handleSubmit (event) {
         event.preventDefault();
-        this.props.onHandleSubmit(event);
+        
+        const degreeProgramData = this.state;
+        // Use api to insert data into semester table
+        this.submitFormData(degreeProgramData);
+        this.setState({
+            degreeID: '',
+            degreeTitle: '',
+            deptID: []
+        });
     }  
 
     
@@ -56,7 +85,19 @@ class AddDegreeProgramForm extends React.Component {
         this.setState({
             deptID: event.target.value
         });
-        this.props.onHandleChange(event);
+    }
+
+    submitFormData = async (degreeProgramData) => {
+        const response = await axios.post(
+            '/api/put/degreeprogramdata',
+            degreeProgramData,
+            { headers: { 'Content-Type': 'application/json' } }
+        )
+        console.log(response);
+        if (response.data.success === 'Department Data Entered.')  {
+            console.log('Department Data entered')
+        }
+        
     }
 
     render () {
@@ -99,13 +140,17 @@ class AddDegreeProgramForm extends React.Component {
                                 id="deptID"
                                 name="deptID"
                                 select
-                                label="Department ID"
+                                label="Department Name"
                                 value={this.state.deptID}
                                 onChange={this.handleSelectChange}
                                 variant="filled"
                                 margin="normal"
                                 >
-                                    { /* load departments from database tab */ }
+                                   {deptList.map((option) => (
+                                    <MenuItem key={uuidv4()} value={option.deptID}>
+                                        {option.deptName}
+                                    </MenuItem>
+                                ))}
                             </TextField>
                             <Button
                                 type="submit"
