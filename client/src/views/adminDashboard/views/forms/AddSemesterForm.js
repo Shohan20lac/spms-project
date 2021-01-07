@@ -12,6 +12,8 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import axios from 'axios';
+import dateFormat from  'dateformat';
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -35,8 +37,8 @@ class AddSemesterForm extends React.Component {
         this.state = {
             season: '',
             year: '',
-            startDate: new Date('2014-08-18T21:11:54'),
-            endDate: new Date('2014-08-18T21:11:54')
+            startDate: dateFormat(new Date('2014-08-18'), "isoDate"),
+            endDate: dateFormat(new Date('2014-08-18'), "isoDate")
         };
         
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -46,18 +48,32 @@ class AddSemesterForm extends React.Component {
     }
 
     handleChange (event) {
-        this.props.onHandleChange(event);
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        
+        this.setState({
+            [name]: value
+        });
     }
 
     handleSubmit (event) {
         event.preventDefault();
-        this.props.onHandleSubmit(event);
+        const semesterData = this.state;
+        // Use api to insert data into semester table
+        this.submitFormData(semesterData);
+        this.setState({
+            season: '',
+            year: '',
+            startDate: dateFormat(new Date('2014-08-18'), "isoDate"),
+            endDate: dateFormat(new Date('2014-08-18'), "isoDate")
+        });
     }  
 
     handleStartDateChange (event) {
         console.dir(event);
         this.setState({
-            startDate: event
+            startDate: dateFormat(event, "isoDate")
         });
         //this.props.onHandleChange(event);
     }
@@ -65,9 +81,22 @@ class AddSemesterForm extends React.Component {
     handleEndDateChange (event) {
         console.dir(event);
         this.setState({
-            endDate: event
+            endDate: dateFormat(event, "isoDate")
         });
         //this.props.onHandleChange(event);
+    }
+
+    submitFormData = async (semesterData) => {
+        const response = await axios.post(
+            '/api/put/semesterdata',
+            semesterData,
+            { headers: { 'Content-Type': 'application/json' } }
+        )
+        console.log(response);
+        if (response.data.success === 'Semester Data Entered.')  {
+            console.log('Semester Data entered')
+        }
+        
     }
  
     render () {
@@ -106,7 +135,7 @@ class AddSemesterForm extends React.Component {
                             />
                             <KeyboardDatePicker
                                 fullWidth
-                                format="MM/dd/yyyy"
+                                format="yyyy/MM/dd"
                                 margin="normal"
                                 id="startDate"
                                 label="Semester Start Date"
@@ -118,7 +147,7 @@ class AddSemesterForm extends React.Component {
                             />
                             <KeyboardDatePicker
                                 fullWidth
-                                format="MM/dd/yyyy"
+                                format="yyyy/MM/dd"
                                 margin="normal"
                                 id="endDate"
                                 label="Semester End Date"

@@ -12,6 +12,7 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -36,7 +37,8 @@ class AddDepartmentForm extends React.Component {
             deptID: '',
             schoolName: '',
             deptName: '',
-            location: ''
+            location: '',
+            deptHeadID: 0
         };
         
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -44,13 +46,41 @@ class AddDepartmentForm extends React.Component {
     }
 
     handleChange (event) {
-        this.props.onHandleChange(event);
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        
+        this.setState({
+            [name]: value
+        });
     }
 
     handleSubmit (event) {
         event.preventDefault();
-        this.props.onHandleSubmit(event);
+        const departmentData = this.state;
+        // Use api to insert data into semester table
+        this.submitFormData(departmentData);
+        this.setState({
+            deptID: '',
+            schoolName: '',
+            deptName: '',
+            location: '',
+            deptHeadID: 0
+        });
     }  
+
+    submitFormData = async (departmentData) => {
+        const response = await axios.post(
+            '/api/put/departmentdata',
+            departmentData,
+            { headers: { 'Content-Type': 'application/json' } }
+        )
+        console.log(response);
+        if (response.data.success === 'Department Data Entered.')  {
+            console.log('Department Data entered')
+        }
+        
+    }
 
     render () {
         const classes = useStyles;
@@ -82,7 +112,7 @@ class AddDepartmentForm extends React.Component {
                                 required
                                 fullWidth
                                 id="schoolName"
-                                label="School Name"
+                                label="Under School of"
                                 name="schoolName"
                                 onChange={this.handleChange}
                             />

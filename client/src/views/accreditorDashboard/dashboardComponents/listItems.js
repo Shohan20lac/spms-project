@@ -33,9 +33,9 @@ export default function MainListItems (props) {
         </Tooltip>
       </Link>
 
-      <Link to={'/dashboard/view-add-courses?accountType=' + props.accountType + '&accountID=' + props.accountID}>
+      <Link to={'/dashboard/view-all-course-mapped-co-plo?accountType=' + props.accountType + '&accountID=' + props.accountID}>
         <Tooltip className="tooltip" title={<span style={{ fontSize: "15px", color: "white" }}>
-          View And Add Courses
+          View All Courses Mapped to CO and PLO
         </span>}>
           <ListItem button>
               <ListItemIcon>
@@ -44,7 +44,7 @@ export default function MainListItems (props) {
               <ListItemText primary="View And Add Courses" />
           </ListItem>
         </Tooltip>
-      </Link>{/* Add a place to add prereqs of a course  */}
+      </Link>{/* Select a Course Title fetched from database and view all the CO and their corresponding PLOs*/}
 
       <Link to={'/dashboard/view-add-semester?accountType=' + props.accountType + '&accountID=' + props.accountID}>
         <Tooltip className="tooltip" title={<span style={{ fontSize: "15px", color: "white" }}>

@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import MenuItem from '@material-ui/core/MenuItem';
+import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -30,31 +31,48 @@ class AddSchoolForm extends React.Component {
         super (props);
         this.state = {
             schoolName: '',
-            deptLocation: '',
+            location: '',
             deanInChargeName: ''
         };
         
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleSelectChange = this.handleSelectChange.bind(this);
     }
 
     handleChange (event) {
-        this.props.onHandleChange(event);
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        
+        this.setState({
+            [name]: value
+        });
     }
 
     handleSubmit (event) {
         event.preventDefault();
-        this.props.onHandleSubmit(event);
-    }  
-
-    handleSelectChange (event) {
-        /*this.setState({
-            accountType: event.target.value
-        });*/
-        this.props.onHandleChange(event);
+        const schoolData = this.state;
+        // Use api to insert data into school table
+        this.submitFormData(schoolData);
+        this.setState({
+            schoolName: '',
+            location: '',
+            deanInChargeName: ''
+        });
     }
- 
+
+    submitFormData = async (schoolData) => {
+        const response = await axios.post(
+            '/api/put/schooldata',
+            schoolData,
+            { headers: { 'Content-Type': 'application/json' } }
+        )
+        console.log(response);
+        if (response.data.success === 'School Data Entered.')  {
+            console.log('School Data entered')
+        }
+        
+    }
     render () {
         const classes = useStyles;
         let successMessage = this.props.successMessage;
@@ -83,9 +101,9 @@ class AddSchoolForm extends React.Component {
                             margin="normal"
                             required
                             fullWidth
-                            id="deptLocation"
-                            label="Department Location"
-                            name="deptLocation"
+                            id="location"
+                            label="School Location"
+                            name="location"
                             onChange={this.handleChange}
                         />
                         <TextField
@@ -94,7 +112,7 @@ class AddSchoolForm extends React.Component {
                             required
                             fullWidth
                             id="deanInChargeName"
-                            label="Dean In Charge Full Name"
+                            label="Dean In Charge's Full Name"
                             name="deanInChargeName"
                             onChange={this.handleChange}
                         />

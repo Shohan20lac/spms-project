@@ -2,7 +2,6 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
-import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
@@ -11,7 +10,6 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -20,25 +18,13 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
+import Auth from '../../Auth.js';
 
 const NotFound = ({ location }) => (
   <div>
     <h3>No match for <code>{location.pathname}</code></h3>
   </div>
 )
-
-function Copyright () {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const drawerWidth = 240;
 
@@ -131,13 +117,13 @@ export default function AccreditorDashboard (props) {
     setOpen(false);
   };
 
-  /*const handleSignOutClick = () => {
+  const handleSignOutClick = () => {
     console.log('click')
     if (Auth.isAuthenticated === true) {
       Auth.signOut();
       props.history.push('/');
     }
-  }*/
+  }
 
   return (
 
@@ -164,7 +150,7 @@ export default function AccreditorDashboard (props) {
             <Link>
               <ListItem button>
                   <ListItemText>
-                    <Button >
+                    <Button onClick={handleSignOutClick}>
                       Sign Out
                     </Button>
                   </ListItemText>
@@ -201,10 +187,6 @@ export default function AccreditorDashboard (props) {
                 <h1>hello</h1>
 
             </Grid>
-
-            <Box pt={4}>
-              <Copyright />
-            </Box>
 
           </Container>
 
