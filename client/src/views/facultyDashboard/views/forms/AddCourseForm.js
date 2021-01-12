@@ -32,7 +32,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 let deptList = [];
-let degreeProgramList = [];
 
 class AddCourseForm extends React.Component {
     constructor (props) {
@@ -44,8 +43,7 @@ class AddCourseForm extends React.Component {
             creditHour: 0.0,
             deptID: '',
             degreeID: '',
-            deptList: [],
-            degreeProgramList: []
+            deptList: []
         };
         
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -54,25 +52,12 @@ class AddCourseForm extends React.Component {
         this.handleDegreeIDSelectChange = this.handleDegreeIDSelectChange.bind(this);
     }
 
-    async loadDepartment () {
-        let { data } = await axios.get('/api/get/department');
+    async componentDidMount () {
+        const { data } = await axios.get('/api/get/department');
         console.dir(data);
         this.setState ({ deptList: data.response });
         deptList = this.state.deptList;
         console.log(deptList);
-    }
-
-    async loadDegreeProgram () {
-        let { data }= await axios.get('/api/get/degreeprogram');
-        console.dir(data);
-        this.setState ({ degreeProgramList: data.response });
-        degreeProgramList = this.state.degreeProgramList;
-        console.log(degreeProgramList);   
-    }
-
-    async componentDidMount () {
-        this.loadDepartment();
-        this.loadDegreeProgram();
         this.forceUpdate();
     }
 
@@ -88,60 +73,8 @@ class AddCourseForm extends React.Component {
 
     handleSubmit (event) {
         event.preventDefault();
-        
         console.dir(this.state);
-        const degreeID = this.state.degreeID;
-        const courseID = this.state.courseID;
-        const courseData = this.state;
-        const degreeCourseData = {
-            degreeID,
-            courseID
-        }
-        // use api to insert data into course table
-        this.submitFormData(courseData, degreeCourseData);
-        this.setState({
-            courseID: 0,
-            courseTitle: '',
-            courseDescription: '',
-            creditHour: 0.0,
-            deptID: '',
-            degreeID: '',
-        });
-    } 
-    
-    async submitDegreeProgramCourse(degreeCourseData) {
-        const response = await axios.post(
-            '/api/put/degreeprogramcourse',
-            degreeCourseData,
-            { headers: { 'Content-Type': 'application/json' } }
-        )
-        console.log(response);
-        if (response.data.success === 'Course Data Entered.')  {
-            console.log('Course Data entered')
-        }
-    }
-
-    submitFormData = async (courseData, degreeCourseData) => {
-        let response = await axios.post(
-            '/api/put/course',
-            courseData,
-            { headers: { 'Content-Type': 'application/json' } }
-        )
-        console.log(response);
-        if (response.data.success === 'Course Data Entered.')  {
-            console.log('Course Data entered')
-        }
-        
-        response = await axios.post(
-            '/api/put/degreeprogramcourse',
-            degreeCourseData,
-            { headers: { 'Content-Type': 'application/json' } }
-        )
-        console.log(response);
-        if (response.data.success === 'Degree Program Course Data Entered.')  {
-            console.log('Degree Program Course Data entered')
-        }
-    }
+    }  
     
     handleDeptIDSelectChange (event) {
         this.setState({
@@ -174,8 +107,8 @@ class AddCourseForm extends React.Component {
                                 required
                                 fullWidth
                                 id="courseID"
-                                label="Course ID"
-                                name="courseID"
+                                label="courseID"
+                                name="Course ID"
                                 autoFocus
                                 onChange={this.handleChange}
                             />
@@ -192,7 +125,6 @@ class AddCourseForm extends React.Component {
                             <TextField
                                 id="courseDescription"
                                 label="Course Description"
-                                name="courseDescription"
                                 onChange={this.handleChange}
                                 multiline
                                 required
@@ -242,11 +174,7 @@ class AddCourseForm extends React.Component {
                                 variant="filled"
                                 margin="normal"
                                 >
-                                {degreeProgramList.map((option) => (
-                                    <MenuItem key={uuidv4()} value={option.degreeID}>
-                                        {option.degreeTitle}
-                                    </MenuItem>
-                                ))} 
+                                    { /* load departments from database tab */ }
                             </TextField>
                             <Button
                                 type="submit"

@@ -35,7 +35,7 @@ class CourseTable extends React.Component {
     }
 
     async componentDidMount () {
-        const { data } = await axios.get('/api/get/course');
+        const { data } = await axios.get('');
         console.dir(data);
         this.setState ({ coursesList: data.response });
         rows = this.state.coursesList;
@@ -53,24 +53,24 @@ class CourseTable extends React.Component {
                 <TableHead>
                     <TableRow>
                         <TableCell>Course ID</TableCell>
-                        <TableCell align="left">Course Title</TableCell>
-                        <TableCell align="left">Course Description</TableCell>
-                        <TableCell align="left">Credit Hour</TableCell>
-                        <TableCell align="left">Department</TableCell>
+                        <TableCell align="right">Course Title</TableCell>
+                        <TableCell align="right">Course Description</TableCell>
+                        <TableCell align="right">Credit Hour</TableCell>
+                        <TableCell align="right">Department</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map(row => (
+                    {/*rows.map(row => (
                     <TableRow key={uuidv4()}>
                         <TableCell component="th" scope="row">
-                        {row.courseID}
+                        {}
                         </TableCell>
-                        <TableCell align="left">{row.courseTitle}</TableCell>
-                        <TableCell align="left">{row.courseDescription}</TableCell>
-                        <TableCell align="left">{row.creditHour}</TableCell>
-                        <TableCell align="left">{row.deptID}</TableCell>
+                        <TableCell align="right">{}</TableCell>
+                        <TableCell align="right">{}</TableCell>
+                        <TableCell align="right">{}</TableCell>
+                        <TableCell align="right">{}</TableCell>
                     </TableRow>
-                    ))}
+                    ))*/}
                 </TableBody>
                 </Table>
             </Paper>

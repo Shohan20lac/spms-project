@@ -4,7 +4,6 @@ import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
@@ -14,7 +13,6 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -32,9 +30,6 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-let schoolsList = [];
-let facultiesList = [];
-
 class AddDepartmentForm extends React.Component {
     constructor (props) {
         super (props);
@@ -43,15 +38,11 @@ class AddDepartmentForm extends React.Component {
             schoolName: '',
             deptName: '',
             location: '',
-            deptHeadID: 0,
-            schoolsList: [],
-            facultiesList: []
+            deptHeadID: 0
         };
         
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleSchoolSelectChange = this.handleSchoolSelectChange.bind(this);
-        this.handleDeptHeadSelectChange = this.handleDeptHeadSelectChange.bind(this);
     }
 
     handleChange (event) {
@@ -67,28 +58,16 @@ class AddDepartmentForm extends React.Component {
     handleSubmit (event) {
         event.preventDefault();
         const departmentData = this.state;
-        // Use api to insert data into department table
+        // Use api to insert data into semester table
         this.submitFormData(departmentData);
         this.setState({
             deptID: '',
             schoolName: '',
             deptName: '',
             location: '',
-            deptHeadID: 0,
+            deptHeadID: 0
         });
     }  
-
-    handleSchoolSelectChange (event) {
-        this.setState({
-            schoolName: event.target.value
-        });
-    }
-
-    handleDeptHeadSelectChange (event) {
-        this.setState({
-            deptHeadID: event.target.value
-        });
-    }
 
     submitFormData = async (departmentData) => {
         const response = await axios.post(
@@ -101,28 +80,6 @@ class AddDepartmentForm extends React.Component {
             console.log('Department Data entered')
         }
         
-    }
-
-    async loadSchools () {
-        let { data }= await axios.get('/api/get/schools');
-        console.dir(data);
-        this.setState ({ schoolsList: data.response });
-        schoolsList = this.state.schoolsList;
-        console.log(schoolsList);   
-    }
-
-    async loadFaculties () {
-        let { data }= await axios.get('/api/get/facultyaccounts');
-        console.dir(data);
-        this.setState ({ facultiesList: data.response });
-        facultiesList = this.state.facultiesList;
-        console.log(facultiesList);   
-    }
-    
-    async componentDidMount () {
-        this.loadSchools();
-        this.loadFaculties();
-        this.forceUpdate();
     }
 
     render () {
@@ -152,21 +109,13 @@ class AddDepartmentForm extends React.Component {
                             <TextField
                                 variant="filled"
                                 margin="normal"
-                                select
                                 required
                                 fullWidth
-                                value={this.state.schoolName}
                                 id="schoolName"
                                 label="Under School of"
                                 name="schoolName"
-                                onChange={this.handleSchoolSelectChange}
-                            >
-                                {schoolsList.map((option) => (
-                                    <MenuItem key={uuidv4()} value={option.schoolName}>
-                                        {option.schoolName}
-                                    </MenuItem>
-                                ))}
-                            </ TextField>
+                                onChange={this.handleChange}
+                            />
                             <TextField
                                 variant="filled"
                                 margin="normal"
@@ -177,24 +126,6 @@ class AddDepartmentForm extends React.Component {
                                 name="deptName"
                                 onChange={this.handleChange}
                             />
-                            <TextField
-                                variant="filled"
-                                margin="normal"
-                                select
-                                required
-                                fullWidth
-                                value={this.state.deptHeadID}
-                                id="deptHeadID"
-                                label="Department Head"
-                                name="deptHeadID"
-                                onChange={this.handleDeptHeadSelectChange}
-                            >
-                                {facultiesList.map((option) => (
-                                    <MenuItem key={uuidv4()} value={option.accountID}>
-                                        {option.firstName + ' ' + option.lastName}
-                                    </MenuItem>
-                                ))}
-                            </ TextField>
                             <TextField
                                 variant="filled"
                                 margin="normal"

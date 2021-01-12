@@ -84,6 +84,9 @@ class SignIn extends React.Component {
 
 class App extends React.Component {
   render () {
+    let  a = 34;
+    console.log(a);
+    
     return (
       <Router>
         <div className="Dashboard">

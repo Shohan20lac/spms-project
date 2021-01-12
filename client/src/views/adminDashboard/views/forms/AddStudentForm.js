@@ -6,10 +6,14 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import DateFnsUtils from '@date-io/date-fns';
+import MenuItem from '@material-ui/core/MenuItem';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
 } from '@material-ui/pickers';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import dateFormat from  'dateformat';
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -27,32 +31,101 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
+let deptList = [];
+let degreeProgramList = [];
+
 class AddStudentForm extends React.Component {
     constructor (props) {
         super (props);
         this.state = {
             accountID: 0,
+            firstName: '',
+            lastName: '',
+            phoneNumber: '',
+            email: '',
+            password: '',
+            accountType: 'Student',
             major: '',
             deptID: '',
             dateOfAdmission: new Date('2014-08-18T21:11:54'),
-            studentType: ''
+            studentType: '',
+            deptList: [],
+            degreeProgramList: []
         };
         
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.handleDateOfAdmissionChange = this.handleDateOfAdmissionChange.bind(this);
         this.handleDeptIDSelectChange = this.handleDeptIDSelectChange.bind(this);
         this.handleStudentTypeSelectChange = this.handleStudentTypeSelectChange.bind(this);
+        this.handleMajorSelectChange = this.handleMajorSelectChange.bind(this);
     }
 
-    handleChange (name, event) {
+    async loadDegreeProgram () {
+        let { data }= await axios.get('/api/get/degreeprogram');
+        console.dir(data);
+        this.setState ({ degreeProgramList: data.response });
+        degreeProgramList = this.state.degreeProgramList;
+        console.log(degreeProgramList);   
+    }
+
+    async loadDepartment () {
+        let { data } = await axios.get('/api/get/department');
+        console.dir(data);
+        this.setState ({ deptList: data.response });
+        deptList = this.state.deptList;
+        console.log(deptList);
+    }
+
+    async componentDidMount () {
+        this.loadDepartment();
+        this.loadDegreeProgram();
+        this.forceUpdate();
+    }
+
+    handleChange (event) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        
         this.setState({
-            [name]: event.target.value
+            [name]: value
         });
     }
 
-    handleSubmit (name, event) {
+    handleSubmit (event) {
+        event.preventDefault();
+
+        const studentData = this.state;
+
+        const sAccountID = this.state.accountID;
+        const sDeptID = this.state.deptID;
+        const sDateOfAdmission = this.state.dateOfAdmission;
+        const sMajor = this.state.major;
+        const studentType = this.state.studentType;
+
+        const studentTableData = {
+            sAccountID,
+            sDeptID,
+            sDateOfAdmission,
+            sMajor,
+            studentType
+        };
+
+        // Use api to insert data into semester table
+        this.submitFormData(studentData, studentTableData);
         this.setState({
-            [name]: event.target.value
+            accountID: 0,
+            firstName: '',
+            lastName: '',
+            phoneNumber: '',
+            email: '',
+            password: '',
+            accountType: 'Student',
+            major: '',
+            deptID: '',
+            dateOfAdmission: new Date('2014-08-18T21:11:54'),
+            studentType: '',
         });
     }  
 
@@ -61,15 +134,19 @@ class AddStudentForm extends React.Component {
         this.setState({
             deptID: event.target.value
         });
-        this.props.onHandleChange(event);
     }
 
-    handleDateOfAdmissioneChange (event) {
+    handleMajorSelectChange (event) {
+        this.setState({
+            major: event.target.value
+        });
+    }
+
+    handleDateOfAdmissionChange (event) {
         console.dir(event);
         this.setState({
-            dateHired: event
+            dateOfAdmission: dateFormat(event, "isoDate")
         });
-        //this.props.onHandleChange(event);
     }
 
     handleStudentTypeSelectChange (event) {
@@ -77,7 +154,28 @@ class AddStudentForm extends React.Component {
         this.setState({
             studentType: event.target.value
         });
-        this.props.onHandleChange(event);
+    }
+
+    submitFormData = async (studentData, studentTableData) => {
+        let response = await axios.post(
+            '/api/put/studentaccount',
+            studentData,
+            { headers: { 'Content-Type': 'application/json' } }
+        )
+        console.log(response);
+        if (response.data.success === 'Account Data Entered.')  {
+            console.log('Account Data entered')
+        }
+        
+        response = await axios.post(
+            '/api/put/student',
+            studentTableData,
+            { headers: { 'Content-Type': 'application/json' } }
+        )
+        console.log(response);
+        if (response.data.success === 'Student Data Entered.')  {
+            console.log('Student Data entered')
+        }
     }
 
     render () {
@@ -94,7 +192,6 @@ class AddStudentForm extends React.Component {
                         </Typography>
                         <form className={classes.form} noValidate onSubmit={this.handleSubmit}>
                             <TextField
-                                type="number"
                                 variant="filled"
                                 margin="normal"
                                 required
@@ -105,6 +202,61 @@ class AddStudentForm extends React.Component {
                                 autoFocus
                                 onChange={this.handleChange}
                             />
+                            <TextField
+                                variant="filled"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="firstName"
+                                label="First Name"
+                                name="firstName"
+                                autoFocus
+                                onChange={this.handleChange}
+                            />
+                            <TextField
+                                variant="filled"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="lastName"
+                                label="Last Name"
+                                name="lastName"
+                                autoFocus
+                                onChange={this.handleChange}
+                            /> 
+                            <TextField
+                                variant="filled"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="phoneNumber"
+                                label="Phone Number"
+                                name="phoneNumber"
+                                autoFocus
+                                onChange={this.handleChange}
+                            /> 
+                            <TextField
+                                variant="filled"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoFocus
+                                onChange={this.handleChange}
+                            />
+                            <TextField
+                                variant="filled"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="password"
+                                label="Password"
+                                name="password"
+                                autoFocus
+                                onChange={this.handleChange}
+                            /> 
                             <TextField
                                 fullWidth
                                 required
@@ -117,7 +269,11 @@ class AddStudentForm extends React.Component {
                                 variant="filled"
                                 margin="normal"
                                 >
-                                    { /* load departments from database tab */ }
+                                {deptList.map((option) => (
+                                    <MenuItem key={uuidv4()} value={option.deptID}>
+                                        {option.deptName}
+                                    </MenuItem>
+                                ))}
                             </TextField>
                             <TextField
                                 fullWidth
@@ -131,7 +287,13 @@ class AddStudentForm extends React.Component {
                                 variant="filled"
                                 margin="normal"
                                 >
-                                    { /* load departments from database tab */ }
+                                        <MenuItem value={"Undergraduate"}>
+                                        {"Undergraduate"}
+                                        </MenuItem>
+                                        <MenuItem value={"Graduate"}>
+                                            {"Graduate"}
+                                        </MenuItem>
+                                    
                             </TextField>
                             <KeyboardDatePicker
                                 fullWidth
@@ -140,7 +302,7 @@ class AddStudentForm extends React.Component {
                                 id="dateOfAdmission"
                                 label="Date of Admission"
                                 value={this.state.dateOfAdmission}
-                                onChange={this.handleDateOfAdmissioneChange}
+                                onChange={this.handleDateOfAdmissionChange}
                                 KeyboardButtonProps={{
                                     'aria-label': 'change date',
                                 }}
@@ -150,12 +312,20 @@ class AddStudentForm extends React.Component {
                                 margin="normal"
                                 required
                                 fullWidth
+                                select
                                 id="major"
                                 label="Major"
                                 name="major"
                                 autoFocus
-                                onChange={this.handleChange}
-                            />
+                                value={this.state.major}
+                                onChange={this.handleMajorSelectChange}
+                            >
+                                {degreeProgramList.map((option) => (
+                                    <MenuItem key={uuidv4()} value={option.degreeTitle}>
+                                        {option.degreeTitle}
+                                    </MenuItem>
+                                ))}
+                            </ TextField>
                             <Button
                                 type="submit"
                                 fullWidth
