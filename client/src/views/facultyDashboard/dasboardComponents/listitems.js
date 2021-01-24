@@ -18,6 +18,19 @@ import { Link } from 'react-router-dom';
 export default function MainListItems (props) { 
     console.dir(props);
     return(
-        
+
+        //Show account type
+        <Link to={'/dashboard?accountType=' + props.accountType + '&accountID=' + props.accountID}>
+        <Tooltip className="tooltip" title={<span style={{ fontSize: "15px", color: "white" }}>
+          Dashboard
+        </span>}>
+          <ListItem button>
+            <ListItemIcon>
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Dashboard" />
+          </ListItem>
+        </Tooltip>
+      </Link>
     );
 }
